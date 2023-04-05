@@ -1,0 +1,17 @@
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\obj\Debug\net6.0\MyBroker.csproj.AssemblyReference.cache
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\obj\Debug\net6.0\MyBroker.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\obj\Debug\net6.0\MyBroker.AssemblyInfoInputs.cache
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\obj\Debug\net6.0\MyBroker.AssemblyInfo.cs
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\obj\Debug\net6.0\MyBroker.csproj.CoreCompileInputs.cache
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\bin\Debug\net6.0\MyBroker.exe
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\bin\Debug\net6.0\MyBroker.deps.json
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\bin\Debug\net6.0\MyBroker.runtimeconfig.json
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\bin\Debug\net6.0\MyBroker.dll
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\bin\Debug\net6.0\MyBroker.pdb
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\obj\Debug\net6.0\MyBroker.dll
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\obj\Debug\net6.0\refint\MyBroker.dll
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\obj\Debug\net6.0\MyBroker.pdb
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\obj\Debug\net6.0\MyBroker.genruntimeconfig.cache
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\obj\Debug\net6.0\ref\MyBroker.dll
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\phmon\Programacao\Broker\MyBroker\MyBroker\obj\Debug\net6.0\MyBroker.csproj.CopyComplete
