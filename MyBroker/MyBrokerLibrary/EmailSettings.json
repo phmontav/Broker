@@ -1,0 +1,10 @@
+{
+  "fromAddress": "my_email@ex.com",
+  "toEmail": [
+    "email-do-destinatario1@exemplo.com",
+    "email-do-destinatario2@exemplo.com"
+  ],
+  "subject": "Assunto do Email",
+  "plainTextContent": "Conteúdo do Email",
+  "htmlContent": "<strong>Conteúdo do Email</strong>"
+}
