@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,10 +7,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace MyBroker
+namespace MyBrokerLibrary
 {
-    internal class StockDataService
+    public class StockDataService : IStockDataService
     {
+        private readonly IConfiguration config;
+
+        public StockDataService(IConfiguration config )
+        {
+            this.config = config;
+        }
+
+        private string getApiKey()
+        {
+            Console.WriteLine(this.config.GetSection("ConnectionString")["X_RAPIDAPI_KEY"]);
+            return this.config.GetSection("ConnectionString")["X_RAPIDAPI_KEY"];
+        }
         public async Task<decimal> getStockPrice(string ticker)
         {
             var client = new HttpClient();
@@ -19,7 +32,7 @@ namespace MyBroker
                 RequestUri = new Uri($"https://mboum-finance.p.rapidapi.com/qu/quote?symbol={ticker}"),
                 Headers =
                 {
-                    { "X-RapidAPI-Key", Environment.GetEnvironmentVariable("X_RAPIDAPI_KEY") },
+                    { "X-RapidAPI-Key", getApiKey() },
                     { "X-RapidAPI-Host", "mboum-finance.p.rapidapi.com" },
                 },
             };
