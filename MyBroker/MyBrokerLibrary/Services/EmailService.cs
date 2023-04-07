@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MyBrokerLibrary.Models;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -16,12 +17,13 @@ namespace MyBrokerLibrary
 {
     public class EmailService : IEmailService
     {
-        private readonly IConfiguration _config;
-        private EmailSettings _settings;
-        public EmailService(IConfiguration config)
+        private readonly IConfiguration config;
+        private readonly ILogger<EmailService> logger;
+        private EmailSettings settings;
+        public EmailService(IConfiguration config, ILogger<EmailService> logger)
         {
-            _config = config;
-
+            this.config = config;
+            this.logger = logger;
             string workingDirectory = Environment.CurrentDirectory;
             string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName;
             var path = projectDirectory + "\\MyBrokerLibrary\\EmailSettings.json";
@@ -31,7 +33,7 @@ namespace MyBrokerLibrary
             };
             try
             {
-                _settings = JsonSerializer
+                this.settings = JsonSerializer
                 .Deserialize<EmailSettings>
                 (
                     File.ReadAllText(path), options
@@ -44,15 +46,19 @@ namespace MyBrokerLibrary
             }
             catch (Exception ex)
             {
-                Console.WriteLine( ex.Message );
-                //_log.LogError("Error looking up the custom text", ex);
-                //throw;
+                this.logger.LogError("error when reading email settings file", ex);
+                throw;
             }
 
         }
         private string getApiKey()
         {
-            return _config.GetSection("ConnectionString")["SendgridApiKey"];
+            
+            try
+            {
+                return this.config.GetSection("ConnectionString")["SendgridApiKey"];
+            }
+            catch(Exception ex) { throw; }
         }
 
         public async Task sendEmail()
@@ -60,18 +66,18 @@ namespace MyBrokerLibrary
             try
             {
                 var client = new SendGridClient(getApiKey());
-                var from = new EmailAddress(_settings.fromAddress);
+                var from = new EmailAddress(this.settings.fromAddress);
                 var subject = "Sending with SendGrid is Fun";
-                var to = new EmailAddress(_settings.toEmail[0]);
-                var plainTextContent = _settings.plainTextContent;
-                var htmlContent = _settings.htmlContent;
+                var to = new EmailAddress(this.settings.toEmail[0]);
+                var plainTextContent = this.settings.plainTextContent;
+                var htmlContent = this.settings.htmlContent;
                 var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
                 var response = await client.SendEmailAsync(msg);
                 Console.WriteLine(response.StatusCode);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                this.logger.LogError("Error sending emails", ex);
                 throw;
             }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,24 @@ namespace MyBrokerLibrary
     public class StockDataService : IStockDataService
     {
         private readonly IConfiguration config;
+        private readonly ILogger<StockDataService> logger;
 
-        public StockDataService(IConfiguration config )
+        public StockDataService(IConfiguration config, ILogger<StockDataService> logger )
         {
             this.config = config;
+            this.logger = logger;
         }
 
         private string getApiKey()
         {
-            Console.WriteLine(this.config.GetSection("ConnectionString")["AlphaVantageKey"]);
-            return this.config.GetSection("ConnectionString")["AlphaVantageKey"];
+            try
+            {
+                return this.config.GetSection("ConnectionString")["AlphaVantageKey"];
+            }
+            catch(Exception ex) {
+                this.logger.LogError("Error when getting api key", ex);
+                throw;
+            }
         }
         public async Task<decimal> getStockPrice(string ticker)
         {
@@ -41,9 +50,9 @@ namespace MyBrokerLibrary
                     return decimal.Parse(marketPrice);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                this.logger.LogError("Error getting stock data",ex);
                 throw;
             }
             
