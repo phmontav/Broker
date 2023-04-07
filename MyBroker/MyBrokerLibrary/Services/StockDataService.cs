@@ -20,32 +20,34 @@ namespace MyBrokerLibrary
 
         private string getApiKey()
         {
-            Console.WriteLine(this.config.GetSection("ConnectionString")["X_RAPIDAPI_KEY"]);
-            return this.config.GetSection("ConnectionString")["X_RAPIDAPI_KEY"];
+            Console.WriteLine(this.config.GetSection("ConnectionString")["AlphaVantageKey"]);
+            return this.config.GetSection("ConnectionString")["AlphaVantageKey"];
         }
         public async Task<decimal> getStockPrice(string ticker)
         {
-            var client = new HttpClient();
-            var request = new HttpRequestMessage
+            string apiKey = getApiKey();
+            string queryUrl = $"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={ticker}&apikey={apiKey}";
+            Uri queryUri = new Uri( queryUrl );
+            try
             {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri($"https://mboum-finance.p.rapidapi.com/qu/quote?symbol={ticker}"),
-                Headers =
+                using (var client = new HttpClient())
                 {
-                    { "X-RapidAPI-Key", getApiKey() },
-                    { "X-RapidAPI-Host", "mboum-finance.p.rapidapi.com" },
-                },
-            };
-            using (var response = await client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var body = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(body);
-                var regularMarketPrice = JArray.Parse(body)[0]["regularMarketPrice"].ToString();
-                Console.WriteLine(regularMarketPrice);
-                return Decimal.Parse(regularMarketPrice);
-                
+                    var response = await client.GetAsync(queryUri);
+                    var json = await response.Content.ReadAsStringAsync();
+                    // Parse the JSON response to get the market price
+                    JObject responseJson = JObject.Parse(json);
+                    string marketPrice = (string)responseJson["Global Quote"]["05. price"];
+                    Console.WriteLine($"The market price of {ticker} is {marketPrice}");
+                    return decimal.Parse(marketPrice);
+                }
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+
         }
     }
 }
