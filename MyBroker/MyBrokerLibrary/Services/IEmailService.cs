@@ -3,6 +3,6 @@ namespace MyBrokerLibrary
 {
     public interface IEmailService
     {
-        Task sendEmail();
+        Task sendEmail(string ticker, string action, string price);
     }
 }

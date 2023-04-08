@@ -42,7 +42,7 @@ namespace MyBrokerLibrary
                 //{
                 //    throw new NullReferenceException("The specified language was not found in the json file.");
                 //}
-                
+
             }
             catch (Exception ex)
             {
@@ -53,27 +53,45 @@ namespace MyBrokerLibrary
         }
         private string getApiKey()
         {
-            
+
             try
             {
                 return this.config.GetSection("ConnectionString")["SendgridApiKey"];
             }
-            catch(Exception ex) { throw; }
+            catch (Exception) { throw; }
         }
 
-        public async Task sendEmail()
+        public (string subject, string plainTextContent, string htmlContent) messageContent(string action, string ticker, string price) 
+        {
+            string subject = "", plainTextContent = "", htmlContent = "";
+            if (action.ToLower() == "buy")
+            {
+                subject = "Buy Action Needed";
+                plainTextContent = $"The Price of {ticker} has dropped to {price}, buy it now!";
+                htmlContent = "<strong>" + plainTextContent + "</strong>";
+            }
+            else
+            {
+                subject = "Sell Action Needed";
+                plainTextContent = $"The Price of {ticker} has risen to {price}, sell it now!";
+                htmlContent = "<strong>" + plainTextContent + "</strong>";
+            }
+            return (subject, plainTextContent, htmlContent);
+        }    
+
+        public async Task sendEmail(string ticker, string action, string price)
         {
             try
             {
                 var client = new SendGridClient(getApiKey());
                 var from = new EmailAddress(this.settings.fromAddress);
-                var subject = "Sending with SendGrid is Fun";
-                var to = new EmailAddress(this.settings.toEmail[0]);
-                var plainTextContent = this.settings.plainTextContent;
-                var htmlContent = this.settings.htmlContent;
-                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-                var response = await client.SendEmailAsync(msg);
-                Console.WriteLine(response.StatusCode);
+                (string subject, string plainTextContent, string htmlContent) = messageContent(action, ticker, price);  
+                foreach(var targetEmail in this.settings.toEmail.ToList())
+                {
+                    var msg = MailHelper.CreateSingleEmail(from,new EmailAddress(targetEmail), subject, plainTextContent, htmlContent);
+                    var response = await client.SendEmailAsync(msg);
+                    Console.WriteLine(response.StatusCode);
+                }
             }
             catch (Exception ex)
             {
