@@ -8,11 +8,16 @@ namespace MyBrokerLibrary.Models
 {
     public class EmailSettings
     {
-        public string? fromAddress { get; set; }
-        public List<string>? toEmail { get; set; }
-        public string? subject { get; set; }
-        public string? plainTextContent { get; set; }
-        public string? htmlContent { get; set; }
+        public Smtp smtp { get; set; }
+        public List<string> toEmail { get; set; }
+    }
+    public class Smtp
+    {
+        public string host { get; set; }
+        public string port { get; set; }
+        public string username { get; set; }
+        public string password { get; set; }
+        public string ssl { get; set; }
     }
 }
 
