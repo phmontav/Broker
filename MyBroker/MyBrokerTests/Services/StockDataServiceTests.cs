@@ -3,38 +3,70 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using MyBrokerLibrary;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
-using Xunit;
+using Xunit; // Você pode usar o framework xUnit para escrever os testes
+
 
 namespace MyBrokerTests.Services
 {
-    public class StockDataServiceTests : IClassFixture<StockDataService> 
+    public class StockDataServiceTests
     {
-        private readonly IStockDataService stockDataService;
-        private readonly ILogger logger;
-        private readonly IConfiguration config;
+        private IConfiguration _config;
+        private ILogger<StockDataService> _logger;
 
         public StockDataServiceTests()
         {
-            //this.logger = logger;
-            //this.config = config;
+            // Configurar objetos falsos (mock objects) para IConfiguration e ILogger
+            _config = new Mock<IConfiguration>().Object;
+            _logger = new Mock<ILogger<StockDataService>>().Object;
         }
-        [Fact]
-        public async void getStockDataValid()
-        {
 
-            string ticker = "PETR4.SA";
-            Mock<IStockDataService> mock = new Mock<IStockDataService>();
-            mock.Setup(m => m.getStockPrice(ticker)).Returns(Task.FromResult(decimal.Parse("20.0")));
-            Assert.IsType<decimal>(await this.stockDataService.getStockPrice(ticker));
-        }
         [Fact]
-        public async void getStockDataInvalid() {
-            string ticker = "paetr4.Sa";
-            Assert.ThrowsAsync<ArgumentNullException>( async() => await stockDataService.getStockPrice(ticker));
+        public async Task GetStockPrice_ValidTicker_ReturnsStockPrice()
+        {
+            // Arrange
+            var stockDataService = new StockDataService(_config, _logger);
+            var ticker = "PETR4";
+            var httpClient = new HttpClient();
+            var response = new HttpResponseMessage
+            {
+                StatusCode = System.Net.HttpStatusCode.OK,
+                Content = new StringContent("{\"results\":[{\"regularMarketPrice\":\"100.00\"}]}")
+            };
+            var httpClientFactoryMock = new Mock<IHttpClientFactory>();
+            httpClientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
+            var httpClientFactory = httpClientFactoryMock.Object;
+
+            // Act
+            var result = await stockDataService.getStockPrice(ticker);
+
+            // Assert
+            Assert.IsType<decimal>(result);
+        }
+
+        [Fact]
+        public async Task GetStockPrice_InvalidTicker_ThrowsArgumentException()
+        {
+            // Arrange
+            var stockDataService = new StockDataService(_config, _logger);
+            var ticker = "INVALID";
+            var httpClient = new HttpClient();
+            var response = new HttpResponseMessage
+            {
+                StatusCode = System.Net.HttpStatusCode.OK,
+                Content = new StringContent("{\"error\":\"Invalid ticker\"}")
+            };
+            var httpClientFactoryMock = new Mock<IHttpClientFactory>();
+            httpClientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
+            var httpClientFactory = httpClientFactoryMock.Object;
+
+            // Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            {
+                // Act
+                var result = await stockDataService.getStockPrice(ticker);
+            });
         }
     }
 }
