@@ -41,7 +41,7 @@ namespace MyBroker
                 {
                     try
                     {
-                        var regularMarketPrice = await this.stockDataService.getStockPrice(ticker); // + ".SA");
+                        var regularMarketPrice = await this.stockDataService.getStockPrice(ticker);
                         if (regularMarketPrice >= sellPrice && flood == false)
                         {
                             flood = true;
@@ -53,9 +53,13 @@ namespace MyBroker
                             //await this.emailService.sendEmail(ticker, "buy", regularMarketPrice.ToString());
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-
+                        if (ex is ArgumentException) throw;
+                        if(ex is HttpRequestException)
+                        {
+                            this.logger.LogCritical("Could not connect to server");
+                        }
                     }
                     await Task.Delay(TimeSpan.FromSeconds(12));
                 }

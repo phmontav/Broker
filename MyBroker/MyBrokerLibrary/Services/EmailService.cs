@@ -10,12 +10,10 @@ namespace MyBrokerLibrary
 {
     public class EmailService : IEmailService
     {
-        private readonly IConfiguration config;
         private readonly ILogger<EmailService> logger;
         private EmailSettings settings;
-        public EmailService(IConfiguration config, ILogger<EmailService> logger)
+        public EmailService(ILogger<EmailService> logger)
         {
-            this.config = config;
             this.logger = logger;
             string workingDirectory = Environment.CurrentDirectory;
             string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName;
@@ -31,11 +29,6 @@ namespace MyBrokerLibrary
                 (
                     File.ReadAllText(path), options
                 );
-                //if (settings is null)
-                //{
-                //    throw new NullReferenceException("The specified language was not found in the json file.");
-                //}
-
             }
             catch (Exception ex)
             {
@@ -72,9 +65,16 @@ namespace MyBrokerLibrary
                 (mailMessage.Subject, mailMessage.Body) = messageContent(ticker, action, price);
                 foreach (var targetEmail in this.settings.toEmail.ToList())
                 {
-                    mailMessage.To.Add(new MailAddress(targetEmail));
+                    try
+                    {
+                        mailMessage.To.Add(new MailAddress(targetEmail));
+                    }
+                    catch (Exception ex)
+                    {
+                        this.logger.LogCritical("Error with the email:{targetEmail}", targetEmail);
+                    }
                 }
-                 await smtpClient.SendMailAsync(mailMessage);
+                 //await smtpClient.SendMailAsync(mailMessage);
                 foreach(var targetEmail in mailMessage.To)
                 {
                     this.logger.LogInformation("Email sent to {targetEmail}", targetEmail);
@@ -84,7 +84,7 @@ namespace MyBrokerLibrary
             catch (Exception ex)
             {
                 this.logger.LogError("Error sending emails", ex);
-                throw;
+                
             }
 
         }
