@@ -18,7 +18,6 @@ namespace MyBrokerTests.Services
         public StockDataServiceTests()
         {
             // Configurar objetos falsos (mock objects) para IConfiguration e ILogger
-            _config = new Mock<IConfiguration>().Object;
             _logger = new Mock<ILogger<StockDataService>>().Object;
         }
 
@@ -26,7 +25,7 @@ namespace MyBrokerTests.Services
         public async Task GetStockPrice_ValidTicker_ReturnsStockPrice()
         {
             // Arrange
-            var stockDataService = new StockDataService(_config, _logger);
+            var stockDataService = new StockDataService( _logger);
             var ticker = "PETR4";
             var httpClient = new HttpClient();
             var response = new HttpResponseMessage
@@ -49,7 +48,7 @@ namespace MyBrokerTests.Services
         public async Task GetStockPrice_InvalidTicker_ThrowsArgumentException()
         {
             // Arrange
-            var stockDataService = new StockDataService(_config, _logger);
+            var stockDataService = new StockDataService(_logger);
             var ticker = "INVALID";
             var httpClient = new HttpClient();
             var response = new HttpResponseMessage
