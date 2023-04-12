@@ -74,7 +74,7 @@ namespace MyBrokerLibrary
                         this.logger.LogCritical("Error with the email:{targetEmail}", targetEmail);
                     }
                 }
-                 //await smtpClient.SendMailAsync(mailMessage);
+                 await smtpClient.SendMailAsync(mailMessage);
                 foreach(var targetEmail in mailMessage.To)
                 {
                     this.logger.LogInformation("Email sent to {targetEmail}", targetEmail);
