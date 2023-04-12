@@ -5,7 +5,7 @@ using MyBrokerLibrary;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Xunit; // Você pode usar o framework xUnit para escrever os testes
+using Xunit;
 
 
 namespace MyBrokerTests.Services
@@ -17,14 +17,12 @@ namespace MyBrokerTests.Services
 
         public StockDataServiceTests()
         {
-            // Configurar objetos falsos (mock objects) para IConfiguration e ILogger
             _logger = new Mock<ILogger<StockDataService>>().Object;
         }
 
         [Fact]
         public async Task GetStockPrice_ValidTicker_ReturnsStockPrice()
         {
-            // Arrange
             var stockDataService = new StockDataService( _logger);
             var ticker = "PETR4";
             var httpClient = new HttpClient();
@@ -37,17 +35,14 @@ namespace MyBrokerTests.Services
             httpClientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
             var httpClientFactory = httpClientFactoryMock.Object;
 
-            // Act
             var result = await stockDataService.getStockPrice(ticker);
 
-            // Assert
             Assert.IsType<decimal>(result);
         }
 
         [Fact]
         public async Task GetStockPrice_InvalidTicker_ThrowsArgumentException()
         {
-            // Arrange
             var stockDataService = new StockDataService(_logger);
             var ticker = "INVALID";
             var httpClient = new HttpClient();
@@ -60,10 +55,8 @@ namespace MyBrokerTests.Services
             httpClientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
             var httpClientFactory = httpClientFactoryMock.Object;
 
-            // Assert
             await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                // Act
                 var result = await stockDataService.getStockPrice(ticker);
             });
         }

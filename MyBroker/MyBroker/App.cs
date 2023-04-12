@@ -36,21 +36,18 @@ namespace MyBroker
                 ticker = ticker.ToUpper();
                 sellPrice = decimal.Parse(args[1]);
                 buyPrice = decimal.Parse(args[2]);
-                bool flood = false;
                 while (true)
                 {
                     try
                     {
                         var regularMarketPrice = await this.stockDataService.getStockPrice(ticker);
-                        if (regularMarketPrice >= sellPrice && flood == false)
+                        if (regularMarketPrice >= sellPrice)
                         {
-                            flood = true;
                             await this.emailService.sendEmail(ticker, "sell", regularMarketPrice.ToString());
                         }
-                        if (regularMarketPrice <= buyPrice && flood == false)
+                        if (regularMarketPrice <= buyPrice)
                         {
-                            flood = true;
-                            //await this.emailService.sendEmail(ticker, "buy", regularMarketPrice.ToString());
+                            await this.emailService.sendEmail(ticker, "buy", regularMarketPrice.ToString());
                         }
                     }
                     catch (Exception ex)
