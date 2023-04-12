@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBroker", "MyBroker\MyBroker.csproj", "{8F8BAC1A-9286-4C58-9A82-51E750ED7246}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBroker", "MyBroker\MyBroker.csproj", "{8F8BAC1A-9286-4C58-9A82-51E750ED7246}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBrokerLibrary", "MyBrokerLibrary\MyBrokerLibrary.csproj", "{8A3D3343-56B2-4773-86DA-89A0E2062B16}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBrokerTests", "MyBrokerTests\MyBrokerTests.csproj", "{5CBD1A13-9164-4FB4-9D12-9885C390FD85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{8F8BAC1A-9286-4C58-9A82-51E750ED7246}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F8BAC1A-9286-4C58-9A82-51E750ED7246}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F8BAC1A-9286-4C58-9A82-51E750ED7246}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A3D3343-56B2-4773-86DA-89A0E2062B16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A3D3343-56B2-4773-86DA-89A0E2062B16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A3D3343-56B2-4773-86DA-89A0E2062B16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A3D3343-56B2-4773-86DA-89A0E2062B16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CBD1A13-9164-4FB4-9D12-9885C390FD85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CBD1A13-9164-4FB4-9D12-9885C390FD85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CBD1A13-9164-4FB4-9D12-9885C390FD85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CBD1A13-9164-4FB4-9D12-9885C390FD85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

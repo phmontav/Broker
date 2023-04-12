@@ -27,34 +27,51 @@ namespace MyBroker
             decimal buyPrice = 0, sellPrice = 0;
             try
             {
+                if(args.Length != 3)
+                {
+                    throw new ArgumentException("Wrong number of arguments passed.It must be 3 arguments:Stock SellPrice BuyPrice");
+
+                }
                 ticker = args[0];
                 ticker = ticker.ToUpper();
-                buyPrice = decimal.Parse(args[1]);
-                sellPrice = decimal.Parse(args[2]);
+                sellPrice = decimal.Parse(args[1]);
+                buyPrice = decimal.Parse(args[2]);
+                bool flood = false;
+                while (true)
+                {
+                    try
+                    {
+                        var regularMarketPrice = await this.stockDataService.getStockPrice(ticker); // + ".SA");
+                        if (regularMarketPrice >= sellPrice && flood == false)
+                        {
+                            flood = true;
+                            await this.emailService.sendEmail(ticker, "sell", regularMarketPrice.ToString());
+                        }
+                        if (regularMarketPrice <= buyPrice && flood == false)
+                        {
+                            flood = true;
+                            //await this.emailService.sendEmail(ticker, "buy", regularMarketPrice.ToString());
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    await Task.Delay(TimeSpan.FromSeconds(12));
+                }
             }
             catch(Exception ex) {
-                this.logger.LogCritical("Error with the command line arguments",ex);
-                throw;
-            }
-            while (true)
-            {
-                try
-                {   
-                    var regularMarketPrice = await this.stockDataService.getStockPrice(ticker + ".SA");
-                    if (regularMarketPrice >= sellPrice)
-                    {
-                        await this.emailService.sendEmail(ticker, "sell", regularMarketPrice.ToString());
-                    }
-                    if (regularMarketPrice <= buyPrice) {
-                        await this.emailService.sendEmail(ticker, "buy", regularMarketPrice.ToString());
-                    }
-                }
-                catch (Exception)
+                if(ex is ArgumentException)
                 {
-                    
+                    this.logger.LogCritical("Error with the command line arguments",ex);
+                    throw;
                 }
-                await Task.Delay(TimeSpan.FromSeconds(5));
+                if(ex is FormatException)
+                {
+                    this.logger.LogCritical("Error with the command line arguments, The prices must consist of only numbers", ex);
+                }
             }
+            
         }
     }
 }
