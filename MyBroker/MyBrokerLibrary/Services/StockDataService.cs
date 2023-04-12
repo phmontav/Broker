@@ -12,12 +12,10 @@ namespace MyBrokerLibrary
 {
     public class StockDataService : IStockDataService
     {
-        private readonly IConfiguration config;
         private readonly ILogger<StockDataService> logger;
 
-        public StockDataService(IConfiguration config, ILogger<StockDataService> logger )
+        public StockDataService( ILogger<StockDataService> logger )
         {
-            this.config = config;
             this.logger = logger;
         }
         public async Task<decimal> getStockPrice(string ticker)
@@ -30,18 +28,30 @@ namespace MyBrokerLibrary
                 {
                     var response = await client.GetAsync(queryUri);
                     var json = await response.Content.ReadAsStringAsync();
-                    // Parse the JSON response to get the market price
                     JObject responseJson = JObject.Parse(json);
+                    if (responseJson.ContainsKey("error"))
+                    {
+                        throw new ArgumentException("Could Not find stock");
+                    }
                     string marketPrice = (string)responseJson["results"][0]["regularMarketPrice"];
-                    Console.WriteLine($"The market price of {ticker} is {marketPrice}");
+                    this.logger.LogInformation($"The market price of {ticker} is {marketPrice}");
                     return decimal.Parse(marketPrice);
                 }
             }
             catch (Exception ex)
             {
-                this.logger.LogError("Error getting stock data", ex);
-                throw;
+                if(ex is ArgumentException)
+                {
+                    this.logger.LogCritical(ex.Message);
+                    throw;
+                }
+                if (ex is HttpRequestException)
+                {
+                    throw;
+                }
+                
             }
+            return -1;
 
         }
     }
